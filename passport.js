@@ -67,9 +67,18 @@ module.exports = function(passport) {
             return done(null, rows[0]);     
     
     });
-    
-
-
     }));
 
+    passport.use('info', new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey   : 'your_jwt_secret'
+    },
+    function (jwtPayload, cb) {
+
+        //find the user in db if needed
+      connection.query("select * from users where id = " + jwtPayload.id, function(err,rows){ 
+        if (err) return cb(err);
+        if (rows) return cb(null, rows[0]);
+      })
+    }));
 };
