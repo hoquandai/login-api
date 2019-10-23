@@ -7,9 +7,13 @@ var bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var meRouter = require('./routes/me');
+var cors = require('cors');
+var flash = require('flash');
 const passport = require("passport");
 require('./passport');
 var app = express();
+app.use(cors());
+// app.use(flash());
 const auth = require('./routes/auth');
 app.use('/auth', auth);
 

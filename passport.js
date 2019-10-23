@@ -53,7 +53,8 @@ module.exports = function(passport) {
         passReqToCallback : true
     },
     function(req, email, password, done) {
-         connection.query("SELECT * FROM `users` WHERE `email` = '" + email + "'",function(err,rows){
+      console.log(email);
+      connection.query("SELECT * FROM `users` WHERE `email` = '" + email + "'",function(err,rows){
       if (err)
         return done(err);
       if (!rows.length) {
