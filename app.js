@@ -9,9 +9,11 @@ var usersRouter = require('./routes/users');
 var meRouter = require('./routes/me');
 var cors = require('cors');
 var flash = require('flash');
+var app = express();
+// app.use(flash());
 const passport = require("passport");
 require('./passport');
-var app = express();
+
 app.use(cors());
 // app.use(flash());
 const auth = require('./routes/auth');
@@ -30,6 +32,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/user', usersRouter);
 app.use('/me', passport.authenticate('info', {session: false}), meRouter);
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile'] }));
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 

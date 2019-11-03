@@ -58,11 +58,11 @@ module.exports = function(passport) {
       if (err)
         return done(err);
       if (!rows.length) {
-        return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+        return done(null, false); // req.flash is the way to set flashdata using connect-flash
       } 
       
       if (!( rows[0].password == password))
-                return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+                return done(null, false); // create the loginMessage and save it to session as flashdata
       
             // all is well, return successful user
             return done(null, rows[0]);     
@@ -82,4 +82,18 @@ module.exports = function(passport) {
         if (rows) return cb(null, rows[0]);
       })
     }));
+
+    var GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+    passport.use(new GoogleStrategy({
+        clientID: GOOGLE_CLIENT_ID,
+        clientSecret: GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:3000/auth/google/callback"
+      },
+      function(accessToken, refreshToken, profile, cb) {
+        User.findOrCreate({ googleId: profile.id }, function (err, user) {
+          return cb(err, user);
+        });
+      }
+    ));
 };
